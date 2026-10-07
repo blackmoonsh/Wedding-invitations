@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#f6e9df">
+<title>دعوت‌نامه عارف و شهرزاد</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#ead8cc}
+body{font-family:"Noto Naskh Arabic","Amiri","Tahoma",serif}
+#site{position:fixed;inset:0;overflow:hidden;background:#f7eee7}
+.page{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translate3d(8%,0,0) scale(.985);transition:opacity .62s ease,transform .72s cubic-bezier(.22,.78,.2,1),visibility .62s}
+.page.active{opacity:1;visibility:visible;transform:none;z-index:5}
+.page.out{opacity:0;transform:translate3d(-8%,0,0) scale(.985)}
+.art{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+.hotspot{position:absolute;z-index:10;border:0;background:transparent;cursor:pointer}
+.page1 .envelope-hit{width:76%;height:37%;left:12%;top:31%}
+.page2 .next-hit{width:45%;height:9%;left:27%;bottom:7.5%}
+.page3 .route-hit{width:50%;height:9%;left:25%;bottom:13%}
+.page4 .count-live div{height:11vw;max-height:75px;min-height:43px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#a46e70}
+.page4 .count-live b{font-size:clamp(22px,6.7vw,45px);font-weight:500;line-height:1}
+.page4 .count-live span{font-size:clamp(9px,2.6vw,15px);margin-top:7px}
+.music{position:fixed;z-index:40;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:1px solid #c6a27e;background:#fffaf5d9;color:#9b7142;box-shadow:0 7px 22px #50382a20;font-size:20px}
+.music.on{animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dots{position:fixed;z-index:35;bottom:13px;left:50%;transform:translateX(-50%);display:flex;gap:6px;direction:ltr}
+.dot{width:7px;height:7px;border-radius:99px;background:#c9a99b;opacity:.6;transition:.3s}
+.dot.on{width:20px;background:#ae7773;opacity:1}
+.route-modal{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;padding:18px;background:#37201b59}
+.route-modal.show{display:flex}
+.sheet{width:min(94vw,430px);background:#fff9f3;border:1px solid #9c724033;border-radius:26px;padding:20px;box-shadow:0 22px 70px #2d19144a;animation:up .32s ease}
+@keyframes up{from{transform:translateY(25px);opacity:0}}
+.sheet-title{text-align:center;color:#80564d;font-size:19px;margin-bottom:12px}
+.option{width:100%;margin-top:9px;border:1px solid #9c72402e;background:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;color:#704d45;font-size:16px}
+.close{border:0;background:transparent;color:#9b7567;font-size:22px;float:left}
+@media(min-width:700px){#site{width:430px;left:50%;right:auto;transform:translateX(-50%);box-shadow:0 0 80px #3c231940}}
+</style>
+</head>
+<body>
+<div id="site">
+<button class="music" id="musicBtn">♫</button>
+
+<section class="page page1 active"><img class="art" src="assets/page1.png" alt="دعوت‌نامه عارف و شهرزاد"><button class="hotspot envelope-hit" id="openEnvelope" aria-label="گشودن دعوت‌نامه"></button></section>
+
+<section class="page page2"><img class="art" src="assets/page2.png" alt="دعوت‌نامه عارف و شهرزاد"><button class="hotspot next-hit" data-next aria-label="ادامه"></button></section>
+
+<section class="page page3"><img class="art" src="assets/page3.png" alt="تالار مهر و ماه - گلپایگان"><button class="hotspot route-hit" id="routeBtn" aria-label="مسیریابی"></button></section>
+
+
+<div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
+</div>
+
+<div class="route-modal" id="modal"><div class="sheet"><button class="close" id="close">×</button><div class="sheet-title">مسیریابی با کدام برنامه؟</div><button class="option" id="google">Google Maps <span>🗺️</span></button><button class="option" id="neshan">نشان <span>🧭</span></button></div></div>
+
+<audio id="audio" loop preload="auto" src="music.mp3"></audio>
+<script>
+const site=document.getElementById("site");
+const pages=[...document.querySelectorAll(".page")],dots=[...document.querySelectorAll(".dot")];
+let current=0,touchX=0;
+function go(n){n=Math.max(0,Math.min(2,n));pages.forEach((p,i)=>{p.classList.toggle("active",i===n);p.classList.toggle("out",i<current&&i!==n)});dots.forEach((d,i)=>d.classList.toggle("on",i===n));current=n}
+document.querySelectorAll("[data-next]").forEach(x=>x.onclick=()=>go(current+1));
+document.getElementById("openEnvelope").onclick=async()=>{const p=pages[0];p.animate([{transform:"scale(1)",opacity:1},{transform:"scale(1.03)",opacity:1,offset:.45},{transform:"scale(1.07)",opacity:0}],{duration:900,easing:"cubic-bezier(.2,.8,.2,1)",fill:"forwards"});await playMusic();setTimeout(()=>go(1),650)};
+site.addEventListener("touchstart",e=>touchX=e.changedTouches[0].screenX,{passive:true});
+site.addEventListener("touchend",e=>{const dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>60)go(current+(dx<0?1:-1))},{passive:true});
+const modal=document.getElementById("modal");
+const routeBtn=document.getElementById("routeBtn"), close=document.getElementById("close"), google=document.getElementById("google"), neshan=document.getElementById("neshan");
+routeBtn.onclick=()=>modal.classList.add("show");close.onclick=()=>modal.classList.remove("show");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("show")};
+google.onclick=()=>location.href="https://maps.app.goo.gl/TebuB8tRfgBUtDgH9";
+neshan.onclick=()=>location.href="https://nshn.ir/?lat=33.46802&lng=50.26105";
+const audio=document.getElementById("audio"),music=document.getElementById("musicBtn");
+async function playMusic(){try{await audio.play();music.classList.add("on")}catch(e){}}
+music.onclick=async()=>{if(audio.paused){await playMusic()}else{audio.pause();music.classList.remove("on")}};
+</script>
+</body>
+</html>
